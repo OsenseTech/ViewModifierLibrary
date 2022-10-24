@@ -24,6 +24,7 @@ struct CoverModifier<CoverView: View>: ViewModifier {
 }
 
 public extension View {
+    @available(iOS, deprecated: 16, renamed: "overlay", message: "use native API")
     func cover<V: View>(@ViewBuilder _ coverView: @escaping () -> V) -> some View {
         modifier(CoverModifier(coverView: coverView))
     }

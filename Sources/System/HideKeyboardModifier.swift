@@ -1,14 +1,14 @@
 //
-//  ViewExtension.swift
-//  NFTxAR
+//  HideKeyboardModifier.swift
+//  Helper
 //
-//  Created by 蘇健豪 on 2022/7/5.
+//  Created by 蘇健豪 on 2022/3/21.
 //
 
 import SwiftUI
 
-extension View {
-    public func hideKeyboard() {
+public extension View {
+    func hideKeyboard() {
         let resign = #selector(UIResponder.resignFirstResponder)
         UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
     }
