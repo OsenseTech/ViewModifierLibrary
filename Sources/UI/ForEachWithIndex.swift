@@ -3,7 +3,7 @@
 //  ObjectCaptureCamera
 //
 //  Created by 蘇健豪 on 2021/12/3.
-//  Preference: https://stackoverflow.com/a/61149111/3295047
+//  Reference: https://stackoverflow.com/a/61149111/3295047
 
 import SwiftUI
 
