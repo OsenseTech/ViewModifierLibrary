@@ -28,9 +28,69 @@ public struct RootView<Content: View>: View {
     }
 }
 
+@available(iOS 16.0, *)
+public struct StatusBarStyleModifier: ViewModifier {
+    
+    public let statusBarStyle: ColorScheme
+    public var visibility: Visibility
+    
+    public init(statusBarStyle: ColorScheme, visibility: Visibility = .visible) {
+        self.statusBarStyle = statusBarStyle
+        self.visibility = visibility
+    }
+    
+    public func body(content: Content) -> some View {
+        content
+            .toolbarBackground(visibility, for: .navigationBar)
+            .toolbarColorScheme(statusBarStyle, for: .navigationBar)
+    }
+}
+
 public extension View {
     ///Sets the status bar style color for this view.
     func statusBarStyle(_ style: UIStatusBarStyle) -> some View {
+        if #available(iOS 16.0, *) {
+            let colorScheme: ColorScheme
+            switch style {
+                case .lightContent:
+                    colorScheme = .light
+                case .darkContent:
+                    colorScheme = .dark
+                default:
+                    colorScheme = .light
+            }
+            
+            return modifier(StatusBarStyleModifier(statusBarStyle: colorScheme))
+        } else {
+            UIApplication.statusBarStyleHierarchy.append(style)
+            //Once this view appears, set the style to the new style. Once it disappears, set it to the previous style.
+            return self.onAppear {
+                UIApplication.setStatusBarStyle(style)
+            }.onDisappear {
+                guard UIApplication.statusBarStyleHierarchy.count > 1 else { return }
+                let style = UIApplication.statusBarStyleHierarchy[UIApplication.statusBarStyleHierarchy.count - 1]
+                UIApplication.statusBarStyleHierarchy.removeLast()
+                UIApplication.setStatusBarStyle(style)
+            }
+        }
+    }
+    
+    @available(iOS 16.0, *)
+    func setStatusBarStyleiOS16(_ style: UIStatusBarStyle, visibility: Visibility) -> some View {
+        let colorScheme: ColorScheme
+        switch style {
+            case .lightContent:
+                colorScheme = .light
+            case .darkContent:
+                colorScheme = .dark
+            default:
+                colorScheme = .light
+        }
+        
+        return modifier(StatusBarStyleModifier(statusBarStyle: colorScheme, visibility: visibility))
+    }
+    
+    func setStatusBarStyleiOS15(_ style: UIStatusBarStyle) -> some View {
         UIApplication.statusBarStyleHierarchy.append(style)
         //Once this view appears, set the style to the new style. Once it disappears, set it to the previous style.
         return self.onAppear {
